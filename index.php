@@ -1,116 +1,237 @@
-<?php
-$alert = '';
-session_start();
-if (!empty($_SESSION['active'])) {
-  header('location: sistema/');
-} else {
-  if (!empty($_POST)) {
-    if (empty($_POST['usuario']) || empty($_POST['clave'])) {
-      $alert = '<div class="alert alert-danger" role="alert">
-  Ingrese su usuario y su clave
-</div>';
-    } else {
-      require_once "conexion.php";
-      $user = mysqli_real_escape_string($conexion, $_POST['usuario']);
-      $clave = md5(mysqli_real_escape_string($conexion, $_POST['clave']));
-      $query = mysqli_query($conexion, "SELECT u.idusuario, u.nombre, u.correo,u.usuario,r.idrol,r.rol FROM usuario u INNER JOIN rol r ON u.rol = r.idrol WHERE u.usuario = '$user' AND u.clave = '$clave'");
-      mysqli_close($conexion);
-      $resultado = mysqli_num_rows($query);
-      if ($resultado > 0) {
-        $dato = mysqli_fetch_array($query);
-        $_SESSION['active'] = true;
-        $_SESSION['idUser'] = $dato['idusuario'];
-        $_SESSION['nombre'] = $dato['nombre'];
-        $_SESSION['email'] = $dato['correo'];
-        $_SESSION['user'] = $dato['usuario'];
-        $_SESSION['rol'] = $dato['idrol'];
-        $_SESSION['rol_name'] = $dato['rol'];
-        header('location: sistema/');
-      } else {
-        $alert = '<div class="alert alert-danger" role="alert">
-              Usuario o Contraseña Incorrecta
-            </div>';
-        session_destroy();
-      }
-    }
-  }
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
+<?php include_once "includes/header.php"; ?>
 
-<head>
+<!-- Begin Page Content -->
+<div class="container-fluid">
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+	<!-- Page Heading -->
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h3 mb-0 text-gray-800">Panel de Administración</h1>
+	</div>
 
-  <title>Wallace E Commercs</title>
+	<!-- Content Row -->
+	<div class="row">
 
-  <!-- Custom fonts for this template-->
-  <link href="sistema/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <!-- Custom styles for this template-->
-  <link href="sistema/css/sb-admin-2.min.css" rel="stylesheet">
+		<!-- Earnings (Monthly) Card Example -->
+		<a class="col-xl-3 col-md-6 mb-4" href="lista_usuarios.php">
+			<div class="card border-left-primary shadow h-100 py-2">
+				<div class="card-body">
+					<div class="row no-gutters align-items-center">
+						<div class="col mr-2">
+							<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Usuarios</div>
+							<div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $data['usuarios']; ?></div>
+						</div>
+						<div class="col-auto">
+							<i class="fas fa-user fa-2x text-gray-300"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</a>
 
-</head>
+		<!-- Earnings (Monthly) Card Example -->
+		<a class="col-xl-3 col-md-6 mb-4" href="lista_cliente.php">
+			<div class="card border-left-success shadow h-100 py-2">
+				<div class="card-body">
+					<div class="row no-gutters align-items-center">
+						<div class="col mr-2">
+							<div class="text-xs font-weight-bold text-success text-uppercase mb-1">Clientes</div>
+							<div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $data['clientes']; ?></div>
+						</div>
+						<div class="col-auto">
+							<i class="fas fa-users fa-2x text-gray-300"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</a>
 
-<body class="bg-gradient-primary">
+		<!-- Earnings (Monthly) Card Example -->
+		<a class="col-xl-3 col-md-6 mb-4" href="lista_productos.php">
+			<div class="card border-left-info shadow h-100 py-2">
+				<div class="card-body">
+					<div class="row no-gutters align-items-center">
+						<div class="col mr-2">
+							<div class="text-xs font-weight-bold text-info text-uppercase mb-1">Productos</div>
+							<div class="row no-gutters align-items-center">
+								<div class="col-auto">
+									<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo $data['productos']; ?></div>
+								</div>
+								<div class="col">
+									<div class="progress progress-sm mr-2">
+										<div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-auto">
+							<i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</a>
 
-  <div class="container">
-    <!-- Outer Row -->
-    <div class="row justify-content-center">
+		<!-- Pending Requests Card Example -->
+		<a class="col-xl-3 col-md-6 mb-4" href="ventas.php">
+			<div class="card border-left-warning shadow h-100 py-2">
+				<div class="card-body">
+					<div class="row no-gutters align-items-center">
+						<div class="col mr-2">
+							<div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ventas</div>
+							<div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $data['ventas']; ?></div>
+						</div>
+						<div class="col-auto">
+							<i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+	<!-- Page Heading -->
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h3 mb-0 text-gray-800">Configuración</h1>
+	</div>
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="card">
+				<div class="card-header bg-primary text-white">
+					Información Personal
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+						<label>Nombre: <strong><?php echo $_SESSION['nombre']; ?></strong></label>
+					</div>
+					<div class="form-group">
+						<label>Correo: <strong><?php echo $_SESSION['email']; ?></strong></label>
+					</div>
+					<div class="form-group">
+						<label>Rol: <strong><?php echo $_SESSION['rol_name']; ?></strong></label>
+					</div>
+					<div class="form-group">
+						<label>Usuario: <strong><?php echo $_SESSION['user']; ?></strong></label>
+					</div>
+					<ul class="list-group">
+						<li class="list-group-item active">Cambiar Contraseña</li>
+						<form action="" method=" post" name="frmChangePass" id="frmChangePass" class="p-3">
+							<div class="form-group">
+								<label>Contraseña Actual</label>
+								<input type="password" name="actual" id="actual" placeholder="Clave Actual" required class="form-control" pattern="^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$" require>
+							</div>
+							<div class="form-group">
+								<label>Nueva Contraseña</label>
+								<input type="password" name="nueva" id="nueva" placeholder="Nueva Clave" required class="form-control" pattern="^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$"  require>
+							</div>
+							<div class="form-group">
+								<label>Confirmar Contraseña</label>
+								<input type="password" name="confirmar" id="confirmar" placeholder="Confirmar clave" required class="form-control" pattern="^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$"  require>
+							</div>
+							<div class="alertChangePass" style="display:none;">
+							</div>
+							<div>
+								<button type="submit" class="btn btn-primary btnChangePass">Cambiar Contraseña</button>
+							</div>
+						</form>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<?php if ($_SESSION['rol'] == 1) { ?>
+			<div class="col-lg-6">
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						Datos de la Empresa
+					</div>
+					<div class="card-body">
+						<form action="empresa.php" method="post" id="frmEmpresa" class="p-3">
+							<div class="form-group">
+								<label>Ruc:</label>
+								<input type="number" name="txtDni" value="<?php echo $dni; ?>" id="txtDni" placeholder="Dni de la Empresa" required class="form-control">
+							</div>
+							<div class="form-group">
+								<label>Nombre:</label>
+								<input type="text" name="txtNombre" class="form-control" value="<?php echo $nombre_empresa; ?>" id="txtNombre" placeholder="Nombre de la Empresa" required class="form-control">
+							</div>
+							<div class="form-group">
+								<label>Razon Social:</label>
+								<input type="text" name="txtRSocial" class="form-control" value="<?php echo $razonSocial; ?>" id="txtRSocial" placeholder="Razon Social de la Empresa">
+							</div>
+							<div class="form-group">
+								<label>Teléfono:</label>
+								<input type="number" name="txtTelEmpresa" class="form-control" value="<?php echo $telEmpresa; ?>" id="txtTelEmpresa" placeholder="teléfono de la Empresa" required>
+							</div>
+							<div class="form-group">
+								<label>Correo Electrónico:</label>
+								<input type="email" name="txtEmailEmpresa" class="form-control" value="<?php echo $emailEmpresa; ?>" id="txtEmailEmpresa" placeholder="Correo de la Empresa" required>
+							</div>
+							<div class="form-group">
+								<label>Dirección:</label>
+								<input type="text" name="txtDirEmpresa" class="form-control" value="<?php echo $dirEmpresa; ?>" id="txtDirEmpresa" placeholder="Dirreción de la Empresa" required>
+							</div>
+							<div class="form-group">
+								<label>IGV (%):</label>
+								<input type="text" name="txtIgv" class="form-control" value="<?php echo $igv; ?>" id="txtIgv" placeholder="IGV de la Empresa" required>
+							</div>
+							<?php echo isset($alert) ? $alert : ''; ?>
+							<div>
+								<button type="submit" class="btn btn-primary btnChangePass"><i class="fas fa-save"></i> Guardar Datos</button>
+							</div>
 
-      <div class="col-xl-10 col-lg-12 col-md-9">
+						</form>
+					</div>
+				</div>
+			</div>
+		<?php } else { ?>
+			<div class="col-lg-6">
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						Datos de la Empresa
+					</div>
+					<div class="card-body">
+						<div class="p-3">
+							<div class="form-group">
+								<strong>Ruc:</strong>
+								<h6><?php echo $dni; ?></h6>
+							</div>
+							<div class="form-group">
+								<strong>Nombre:</strong>
+								<h6><?php echo $nombre_empresa; ?></h6>
+							</div>
+							<div class="form-group">
+								<strong>Razon Social:</strong>
+								<h6><?php echo $razonSocial; ?></h6>
+							</div>
+							<div class="form-group">
+								<strong>Teléfono:</strong>
+								<?php echo $telEmpresa; ?>
+							</div>
+							<div class="form-group">
+								<strong>Correo Electrónico:</strong>
+								<h6><?php echo $emailEmpresa; ?></h6>
+							</div>
+							<div class="form-group">
+								<strong>Dirección:</strong>
+								<h6><?php echo $dirEmpresa; ?></h6>
+							</div>
+							<div class="form-group">
+								<strong>IGV (%):</strong>
+								<h6><?php echo $igv; ?></h6>
+							</div>
 
-        <div class="card o-hidden border-0 shadow-lg my-5">
-          <div class="card-body p-0">
-            <!-- Nested Row within Card Body -->
-            <div class="row">
-              <div class="col-lg-6 d-none d-lg-block bg-login-image">
-                <img src="sistema/img/logo2.jpg" class="img-thumbnail">
-              </div>
-              <div class="col-lg-6">
-                <div class="p-5">
-                  <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Iniciar Sesión</h1>
-                  </div>
-                  <form class="user" method="POST">
-                    <?php echo isset($alert) ? $alert : ""; ?>
-                    <div class="form-group">
-                      <label for="">Usuario</label>
-                      <input type="text" class="form-control" placeholder="Usuario" name="usuario"></div>
-                    <div class="form-group">
-                      <label for="">Contraseña</label>
-                      <input type="password" class="form-control" placeholder="Contraseña" name="clave" pattern="^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$"  require>
-                    </div>
-                    <input type="submit" value="Iniciar" class="btn btn-primary">
-                    <hr>
-                  </form>
-                  <hr>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      </div>
+		<?php } ?>
+	</div>
 
-    </div>
 
-  </div>
+</div>
+<!-- /.container-fluid -->
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="sistema/vendor/jquery/jquery.min.js"></script>
-  <script src="sistema/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</div>
+<!-- End of Main Content -->
 
-  <!-- Core plugin JavaScript-->
-  <script src="sistema/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-  <!-- Custom scripts for all pages-->
-  <script src="sistema/js/sb-admin-2.min.js"></script>
-
-</body>
-
-</html>
+<?php include_once "includes/footer.php"; ?> 
